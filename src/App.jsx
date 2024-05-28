@@ -27,11 +27,11 @@ import ForgotPassword from "./pages/ForgotPassword"
 
 
 
-import ProviderStat from "./components/core/Dashboard/ProviderStat"
+import ProviderStat from "./components/core/Dashboard/ProviderDashboard/ProviderStat"
 
-import AddService from "./components/core/Dashboard/AddService/index"
-import EditService from "./components/core/Dashboard/EditService"
-import MyServices from "./components/core/Dashboard/MyServices"
+import AddService from "./components/core/Dashboard/ProviderDashboard/Add/AddService/index"
+// import EditService from "./components/core/Dashboard/EditService"
+import MyServices from "./components/core/Dashboard/ProviderDashboard/MyServices"
 
 // import Add from "./components/core/Dashboard/ProviderDashboard/Add"
 // import AddProduct from "./components/core/Dashboard/ProviderDashboard/Add/AddProduct"
@@ -124,57 +124,50 @@ function App() {
           }
         >
         
-          {/* Route for all users */}
-          <Route path="dashboard/my-profile" element={<MyProfile />} />
-          <Route path="dashboard/Settings" element={<Settings />} />
-      
-          {/* Route only for Instructors */}
-          {user?.accountType === ACCOUNT_TYPE.PROVIDER && (
-            <>
-              
-            </>
-          )}
+                  {/* Route for all users */}
+                  <Route path="dashboard/my-profile" element={<MyProfile />} />
+                  <Route path="dashboard/Settings" element={<Settings />} />
+    
+                  {/* Route only for Customers */}
+                  {user?.accountType === ACCOUNT_TYPE.USER && (
+                  <>
+                  <Route path="dashboard/my-history" element={<MyHistory />}/>
+                  <Route path="/dashboard/cart" element={<Cart />} />
+                  </>
+                  )}
+            
+                  {/* Route only for Providers */}
+                  {user?.accountType === ACCOUNT_TYPE.PROVIDER && (
+                  <>
 
- 
+                 <Route path="dashboard/provider-stat" element={<ProviderStat />} />
+
+                 {/*<Route path="/dashboard/add" element={<Add />} />
+                 <Route path="/dashboard/add-product" element={<AddProduct/> } />
+                 <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} /> */}
+
+                 <Route path="dashboard/my-services" element={<MyServices />} />
+                 <Route path="dashboard/add-service" element={<AddService />} />
+                 {/* <Route path="dashboard/edit-service/:serviceId" element={<EditService />} */}
+                 />
+                 </>
+                 )}        
+
+                  {/* Route only for Admins */}
+                  {user?.accountType === ACCOUNT_TYPE.ADMIN && (
+                  {/* <>
+                  <Route path="/dashboard/add-category" element={<AddCategory />} />
+                  <Route path="/dashboard/my-categories" element={<MyCategories/>} />
+                  <Route path="/dashboard/edit-category/:id" element={<EditCategory/>} />
+                  </> */}
+                  )} 
+
+  
+
         </Route>
 
      
-          {/* Route only for Students */}
-          {user?.accountType === ACCOUNT_TYPE.USER && (
-            <>
-              <Route
-                path="dashboard/my-history"
-                element={<MyHistory />}
-              />
-              <Route path="/dashboard/cart" element={<Cart />} />
-            </>
-          )}
-          
-          {/* Route only for Admins */}
-          {user?.accountType === ACCOUNT_TYPE.ADMIN && (
-            {/* <>
-              <Route path="/dashboard/add-category" element={<AddCategory />} />
-              <Route path="/dashboard/my-categories" element={<MyCategories/>} />
-              <Route path="/dashboard/edit-category/:id" element={<EditCategory/>} />
-            </> */}
-          )} 
-
-          {/* Route only for Providers */}
-          {user?.accountType === ACCOUNT_TYPE.PROVIDER && (
-            <>
-
-              <Route path="dashboard/provider-stat" element={<ProviderStat />} />
-
-              <Route path="/dashboard/add" element={<Add />} />{/*
-              <Route path="/dashboard/add-product" element={<AddProduct/> } />
-              <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} /> */}
-
-              <Route path="dashboard/my-services" element={<MyServices />} />
-              <Route path="dashboard/add-service" element={<AddService />} />
-              <Route path="dashboard/edit-service/:serviceId" element={<EditService />}
-              />
-            </>
-          )} 
+         
        
         {/* 404 Page */}
         <Route path="*" element={<Error />} />
