@@ -21,9 +21,9 @@ import Dashboard from "./pages/Dashboard"
 import Error from "./pages/Error"
 import ForgotPassword from "./pages/ForgotPassword"
 
-import  AddCategory  from "./components/core/Dashboard/AdminDashboard/addCategory"
-import MyCategories from "./components/core/Dashboard/AdminDashboard/myCategories"
-import EditCategory from "./components/core/Dashboard/ProviderDashboard/Edit/indexCategory"
+// import  AddCategory  from "./components/core/Dashboard/AdminDashboard/addCategory"
+// import MyCategories from "./components/core/Dashboard/AdminDashboard/myCategories"
+// import EditCategory from "./components/core/Dashboard/ProviderDashboard/Edit/indexCategory"
 
 
 
@@ -33,9 +33,9 @@ import AddService from "./components/core/Dashboard/AddService/index"
 import EditService from "./components/core/Dashboard/EditService"
 import MyServices from "./components/core/Dashboard/MyServices"
 
-import Add from "./components/core/Dashboard/ProviderDashboard/Add"
-import AddProduct from "./components/core/Dashboard/ProviderDashboard/Add/AddProduct"
-import EditProduct from "./components/core/Dashboard/ProviderDashboard/Edit/indexProduct"
+// import Add from "./components/core/Dashboard/ProviderDashboard/Add"
+// import AddProduct from "./components/core/Dashboard/ProviderDashboard/Add/AddProduct"
+// import EditProduct from "./components/core/Dashboard/ProviderDashboard/Edit/indexProduct"
 
 
 // Pages
@@ -152,11 +152,11 @@ function App() {
           
           {/* Route only for Admins */}
           {user?.accountType === ACCOUNT_TYPE.ADMIN && (
-            <>
+            {/* <>
               <Route path="/dashboard/add-category" element={<AddCategory />} />
               <Route path="/dashboard/my-categories" element={<MyCategories/>} />
               <Route path="/dashboard/edit-category/:id" element={<EditCategory/>} />
-            </>
+            </> */}
           )} 
 
           {/* Route only for Providers */}
@@ -165,9 +165,9 @@ function App() {
 
               <Route path="dashboard/provider-stat" element={<ProviderStat />} />
 
-              <Route path="/dashboard/add" element={<Add />} />
+              <Route path="/dashboard/add" element={<Add />} />{/*
               <Route path="/dashboard/add-product" element={<AddProduct/> } />
-              <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} />
+              <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} /> */}
 
               <Route path="dashboard/my-services" element={<MyServices />} />
               <Route path="dashboard/add-service" element={<AddService />} />
@@ -182,3 +182,5 @@ function App() {
     </div>
   )
 }
+
+export default App;
