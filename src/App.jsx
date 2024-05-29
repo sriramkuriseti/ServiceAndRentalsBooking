@@ -21,21 +21,21 @@ import Dashboard from "./pages/Dashboard"
 import Error from "./pages/Error"
 import ForgotPassword from "./pages/ForgotPassword"
 
-import  AddCategory  from "./components/core/Dashboard/AdminDashboard/addCategory"
-import MyCategories from "./components/core/Dashboard/AdminDashboard/myCategories"
-import EditCategory from "./components/core/Dashboard/ProviderDashboard/Edit/indexCategory"
+// import  AddCategory  from "./components/core/Dashboard/AdminDashboard/addCategory"
+// import MyCategories from "./components/core/Dashboard/AdminDashboard/myCategories"
+// import EditCategory from "./components/core/Dashboard/ProviderDashboard/Edit/indexCategory"
 
 
 
-import ProviderStat from "./components/core/Dashboard/ProviderStat"
+import ProviderStat from "./components/core/Dashboard/ProviderDashboard/ProviderStat"
 
-import AddService from "./components/core/Dashboard/AddService/index"
-import EditService from "./components/core/Dashboard/EditService"
-import MyServices from "./components/core/Dashboard/MyServices"
+import AddService from "./components/core/Dashboard/ProviderDashboard/Add/AddService/index"
+// import EditService from "./components/core/Dashboard/EditService"
+import MyServices from "./components/core/Dashboard/ProviderDashboard/MyServices"
 
-import Add from "./components/core/Dashboard/ProviderDashboard/Add"
-import AddProduct from "./components/core/Dashboard/ProviderDashboard/Add/AddProduct"
-import EditProduct from "./components/core/Dashboard/ProviderDashboard/Edit/indexProduct"
+// import Add from "./components/core/Dashboard/ProviderDashboard/Add"
+// import AddProduct from "./components/core/Dashboard/ProviderDashboard/Add/AddProduct"
+// import EditProduct from "./components/core/Dashboard/ProviderDashboard/Edit/indexProduct"
 
 
 // Pages
@@ -128,14 +128,25 @@ export default function App() {
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/Settings" element={<Settings />} />
       
-          {/* Route only for Instructors */}
+          {/* Route only for Providers */}
           {user?.accountType === ACCOUNT_TYPE.PROVIDER && (
             <>
-            <Route path="/dashboard/add" element={<Add />} />
-            <Route path="/dashboard/add-product" element={<AddProduct/> } />
-            <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} />
+
+                <Route path="dashboard/provider-stat" element={<ProviderStat />} />
+
+                {/*<Route path="/dashboard/add" element={<Add />} />
+                <Route path="/dashboard/add-product" element={<AddProduct/> } />
+                <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} /> */}
+
+              <Route path="dashboard/my-services" element={<MyServices />} />
+              <Route path="dashboard/add-service" element={<AddService />} />
+              <Route path="dashboard/edit-service/:serviceId" element={<EditService />}
+              />
             </>
-          )}
+          )} 
+ 
+        </Route>
+
      
           {/* Route only for Students */}
           {user?.accountType === ACCOUNT_TYPE.USER && (
@@ -156,28 +167,11 @@ export default function App() {
               <Route path="/dashboard/edit-category/:id" element={<EditCategory/>} />
             </>
           )} 
-
-          {/* Route only for Providers */}
-          {user?.accountType === ACCOUNT_TYPE.PROVIDER && (
-            <>
-
-              <Route path="dashboard/provider-stat" element={<ProviderStat />} />
-
-              <Route path="/dashboard/add" element={<Add />} />
-              <Route path="/dashboard/add-product" element={<AddProduct/> } />
-              <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} />
-
-              <Route path="dashboard/my-services" element={<MyServices />} />
-              <Route path="dashboard/add-service" element={<AddService />} />
-              <Route path="dashboard/edit-service/:serviceId" element={<EditService />}
-              />
-            </>
-          )} 
-          
-        </Route>
         {/* 404 Page */}
         <Route path="*" element={<Error />} />
       </Routes>
     </div>
   )
 }
+
+export default App;

@@ -9,15 +9,15 @@ import {
   addServiceDetails,
   editServiceDetails,
   
-} from "../../../../../services/operations/serviceDetailsAPI"
+} from "../../../../../../../services/operations/serviceDetailsAPI"
 
 import{
   fetchAllCategories
 } from "../../../../../services/operations/categoryDetailsAPI"
 
-import { setService, setStep } from "../../../../../slices/serviceSlice"
-import { STATUS } from "../../../../../utils/constants"
-import IconBtn from "../../../../Common/IconBtn"
+import { setService, setStep } from "../../../../../../../slices/serviceSlice"
+import { STATUS } from "../../../../../../../utils/constants"
+import IconBtn from "../../../../../../Common/IconBtn"
  import Upload from "../Upload"
 import ChipInput from "./ChipInput"
 
