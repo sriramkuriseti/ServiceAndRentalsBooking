@@ -134,28 +134,26 @@ export default function EditProfile() {
 
           <div className="flex flex-col gap-5 lg:flex-row">
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="contactNumber" className="lable-style">
-                Contact Number
+              <label htmlFor="address" className="lable-style">
+                Address
               </label>
               <input
-                type="tel"
-                name="contactNumber"
-                id="contactNumber"
-                placeholder="Enter Contact Number"
+                type="text"
+                name="address"
+                id="address"
+                placeholder="Enter your complete Address"
                 className="form-style"
-                {...register("contactNumber", {
+                {...register("address", {
                   required: {
                     value: true,
-                    message: "Please enter your Contact Number.",
-                  },
-                  maxLength: { value: 12, message: "Invalid Contact Number" },
-                  minLength: { value: 10, message: "Invalid Contact Number" },
+                    message: "Please enter your Address.",
+                  }
                 })}
-                defaultValue={user?.additionalDetails?.contactNumber}
+                defaultValue={user?.additionalDetails?.address}
               />
-              {errors.contactNumber && (
+              {errors.address && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
-                  {errors.contactNumber.message}
+                  {errors.address.message}
                 </span>
               )}
             </div>

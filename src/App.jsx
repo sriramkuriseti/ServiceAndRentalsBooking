@@ -48,7 +48,7 @@ import VerifyEmail from "./pages/VerifyEmail"
 import { getUserDetails } from "./services/operations/profileAPI"
 import { ACCOUNT_TYPE } from "./utils/constants"
 
-function App() {
+export default function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { user } = useSelector((state) => state.profile)
@@ -131,13 +131,11 @@ function App() {
           {/* Route only for Instructors */}
           {user?.accountType === ACCOUNT_TYPE.PROVIDER && (
             <>
-              
+            <Route path="/dashboard/add" element={<Add />} />
+            <Route path="/dashboard/add-product" element={<AddProduct/> } />
+            <Route path="/dashboard/edit-product/:id" element={<EditProduct/>} />
             </>
           )}
-
- 
-        </Route>
-
      
           {/* Route only for Students */}
           {user?.accountType === ACCOUNT_TYPE.USER && (
@@ -175,7 +173,8 @@ function App() {
               />
             </>
           )} 
-       
+          
+        </Route>
         {/* 404 Page */}
         <Route path="*" element={<Error />} />
       </Routes>

@@ -1,42 +1,44 @@
-import { useEffect, useState } from "react"
-import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
-import { BsChevronDown } from "react-icons/bs"
-import { useSelector } from "react-redux"
-import { Link, matchPath, useLocation } from "react-router-dom"
-import { apiConnector } from "../../services/apiConnector"
+import { useEffect, useState } from "react";
+import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai";
+import { BsChevronDown } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { Link, matchPath, useLocation } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-import logo from "../../assets/Logo/Logo-Full-Light.png"
-import { NavbarLinks } from "../../data/navbar-links"
-import { categories } from "../../services/apis"
-import { ACCOUNT_TYPE } from "../../utils/constants"
-import ProfileDropdown from "../core/Auth/ProfileDropdown"
+import logo from "../../assets/Logo/Logo-Full-Light.png";
+import { NavbarLinks } from "../../data/navbar-links";
+import { fetchAllCategories } from "../../services/operations/categoryDetailsAPI";
+import { ACCOUNT_TYPE } from "../../utils/constants";
+import ProfileDropdown from "../core/Auth/ProfileDropdown";
 
 function Navbar() {
-  const { token } = useSelector((state) => state.auth)
-  const { user } = useSelector((state) => state.profile)
-  const { totalItems } = useSelector((state) => state.cart)
-  const location = useLocation()
-
-  const [subLinks, setSubLinks] = useState([])
-  const [loading, setLoading] = useState(false)
+  const { token } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.profile);
+  const { totalItems } = useSelector((state) => state.cart);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const [subLinks, setSubLinks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     (async () => {
-      setLoading(true)
+      setLoading(true);
       try {
-        const res = await apiConnector("GET", categories.CATEGORIES_API)
-        console.log(res)
-        setSubLinks(res.data.data || []) // Ensure res.data.data is defined
+        const res = await fetchAllCategories();
+        console.log(res);
+        setSubLinks(res || []); // Ensure res is defined
       } catch (error) {
-        console.log("Could not fetch Categories.", error)
+        console.log("Could not fetch Categories.", error);
       }
-      setLoading(false)
-    })()
-  }, [])
+      setLoading(false);
+    })();
+  }, []);
 
   const matchRoute = (route) => {
-    return matchPath({ path: route }, location.pathname)
-  }
+    return matchPath({ path: route }, location.pathname);
+  };
 
   return (
     <div
@@ -69,22 +71,29 @@ function Navbar() {
                       {loading ? (
                         <p className="text-center">Loading...</p>
                       ) : (
-                        subLinks.length > 0 && (
-                          <>
-                            {subLinks.map((subLink, i) => (
-                              <Link
-                                to={`/catalog/${subLink.name
-                                  .split(" ")
-                                  .join("-")
-                                  .toLowerCase()}`}
-                                className="rounded-lg bg-transparent py-4 pl-4 hover:bg-richblack-50"
-                                key={i}
-                              >
-                                <p>{subLink.name}</p>
-                              </Link>
-                            ))}
-                          </>
-                        )
+                        <>
+                          {subLinks.slice(0, showAll ? subLinks.length : 5).map((subLink, i) => (
+                            <Link
+                              to={`/catalog/${subLink.name
+                                .split(" ")
+                                .join("-")
+                                .toLowerCase()}`}
+                              className="rounded-lg bg-transparent py-4 pl-4 hover:bg-richblack-50"
+                              key={i}
+                              style={{ display: 'block', marginBottom: '8px' }}
+                            >
+                              <p>{subLink.name}</p>
+                            </Link>
+                          ))}
+                          {subLinks.length > 5 && (
+                            <button
+                              onClick={() => setShowAll(!showAll)}
+                              className="text-richblack-900 hover:text-richblack-800 mt-2"
+                            >
+                              { !showAll ? "Show More" : "Show Less"}
+                            </button>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -141,4 +150,4 @@ function Navbar() {
   )
 }
 
-export default Navbar
+export default Navbar;

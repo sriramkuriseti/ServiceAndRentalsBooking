@@ -83,7 +83,7 @@ exports.createProduct = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            product,
+            data : product,
             message: 'Product created successfully.',
         });
     } catch (error) {

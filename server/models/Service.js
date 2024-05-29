@@ -2,28 +2,19 @@ const mongoose = require("mongoose")
 
 // Define the service schema
 const serviceSchema = new mongoose.Schema({
-  serviceName: {
+  name: {
         type: String ,
         required:true
    },
-  serviceDescription: {
+  description: {
         type: String ,
         required:true
     },
-  serviceProvider: {
+  provider: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "user",
   },
-  // whatYouWillLearn: {
-  //   type: String,
-  // },
-  // instructions: {
-  //   type: [String],
-  // },
-  location: {
-        type: String,
-},
  ratingAndReviews: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -34,9 +25,13 @@ const serviceSchema = new mongoose.Schema({
     type: Number,
     required:true
   },
+  status: {
+		type: String,
+		enum: ["Draft", "Published"],
+	  },
   thumbnail: {
     type: String,
-    
+    required:true
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,

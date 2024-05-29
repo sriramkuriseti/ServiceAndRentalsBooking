@@ -1,7 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
- 
-
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontFamily: {
@@ -13,6 +11,7 @@ module.exports = {
       white: "#fff",
       black: "#000",
       transparent: "#ffffff00",
+      darkGrey: "#4B5563", // Add this line
       richblack: {
         5:   "#F1F2FF",
         25:  "#DBDDEA",
@@ -132,10 +131,10 @@ module.exports = {
         maxContentTab: "650px"
       },
       backgroundImage: {
-        'rent-home': "url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\rent-home.jpg')",  
-        'product-home' : "url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\products-home.png')",
-        'service-home' : "url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\service-home.avif')",
-        'business-home' : "url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\business-home.jpeg')",
+        'rent-home': "url('D:\\WEB DEVELOPMENT PROJECTS\\MINIPROJECT\\miniProject\\src\\assets\\Images\\rent-home.jpg')",  
+        'product-home' : "url('D:\\WEB DEVELOPMENT PROJECTS\\MINIPROJECT\\miniProject\\src\\assets\\Images\\products-home.png')",
+        'service-home' : "url('D:\\WEB DEVELOPMENT PROJECTS\\MINIPROJECT\\miniProject\\src\\assets\\Images\\service-home.avif')",
+        'business-home' : "url('D:\\WEB DEVELOPMENT PROJECTS\\MINIPROJECT\\miniProject\\src\\assets\\Images\\business-home.jpeg')",
       },
       width: {
         '1/10': '10%',

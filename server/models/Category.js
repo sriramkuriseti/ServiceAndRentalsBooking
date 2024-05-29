@@ -6,6 +6,10 @@ const categorySchema = new mongoose.Schema({
 		required: true,
 	},
 	description: { type: String },
+	status: {
+		type: String,
+		enum: ["Draft", "Published"],
+	  },
 	services: [
 		{
 			type: mongoose.Schema.Types.ObjectId,

@@ -21,7 +21,8 @@ export const profileEndpoints = {
 export const categories = {
   FETCH_CATEGORIES_API: BASE_URL + "/category/getAllCategories",
   CREATE_CATEGORY:BASE_URL+"/category/createCategory",
-  EDIT_CATEGORY: BASE_URL+"/category/editCategory/:id"
+  EDIT_CATEGORY: BASE_URL+"/category/editCategory/:id",
+  GET_CATEGORY_DETAILS: BASE_URL+"/category/getCategoryDetails/:id",
 }
 
 

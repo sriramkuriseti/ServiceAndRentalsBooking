@@ -28,11 +28,14 @@ exports.updateProfile = async (req, res) => {
       about = "",
       gender = "",
       address = "",
+      contactNumber=" ",
     } = req.body;
-    const { id } = req.params;
+    const  id  = req.user.id;
 
+    console.log(" user :",id);
     // Find the user by id
     const userDetails = await user.findById(id);
+    console.log(" userDetails :",userDetails);
     if (!userDetails) {
       return res.status(404).json({
         success: false,
@@ -53,6 +56,7 @@ exports.updateProfile = async (req, res) => {
     const updatedUser = await user.findByIdAndUpdate(id, {
       firstName,
       lastName,
+      contactNumber
     });
     await updatedUser.save();
 
@@ -88,15 +92,16 @@ exports.updateProfile = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   try {
-    const id = req.params.id
+    const id = req.user.id
     console.log(id)
-    const userExist = await user.findById({ _id: id })
+    const userExist = await user.findById( id )
     if (!userExist) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       })
     }
+    console.log( " delete profile user :",userExist);
 
     //    // Delete Assosiated Profile with the User
     //    await profilerofile.findByIdAndDelete({
@@ -177,7 +182,7 @@ exports.deleteAccount = async (req, res) => {
 
 exports.getAllUserDetails = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user.id;
     const userDetails = await User.findById(userId)
       .populate("additionalDetails")
       .exec();

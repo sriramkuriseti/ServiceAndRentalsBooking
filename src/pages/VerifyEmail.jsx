@@ -28,6 +28,7 @@ function VerifyEmail() {
       firstName,
       lastName,
       email,
+      contactNumber,
       password,
       confirmPassword,
     } = signupData;
@@ -38,6 +39,7 @@ function VerifyEmail() {
         firstName,
         lastName,
         email,
+        contactNumber,
         password,
         confirmPassword,
         otp,

@@ -47,6 +47,7 @@ export function signUp(
   firstName,
   lastName,
   email,
+  contactNumber,
   password,
   confirmPassword,
   otp,
@@ -61,6 +62,7 @@ export function signUp(
         firstName,
         lastName,
         email,
+        contactNumber,
         password,
         confirmPassword,
         otp,
@@ -86,6 +88,7 @@ export function signUp(
 export function login(email, password, navigate) {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...")
+    console.log("base url :",process.env.REACT_APP_BASE_URL)
     dispatch(setLoading(true))
     try {
       const response = await apiConnector("POST", LOGIN_API, {

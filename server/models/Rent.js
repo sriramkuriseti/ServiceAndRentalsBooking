@@ -17,16 +17,21 @@ const rentSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        slotprice: {
+        price: {
             type: Number,
             required: true,
         },
         slots: [{
             type: mongoose.Schema.Types.ObjectId,
             ref : "RentSlots"
-          },],
+          }],
+          status: {
+            type: String,
+            enum: ["Draft", "Published"],
+          },
         thumbnail: {
             type: String,
+            required:true
         },
         category: {
             type: mongoose.Schema.Types.ObjectId,

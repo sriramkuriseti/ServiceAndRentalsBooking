@@ -23,12 +23,17 @@ const productSchema = new mongoose.Schema(
         },
         thumbnail: {
             type: String,
+            required:true,
         },
         category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "category",
             required: true,
         },
+        status: {
+            type: String,
+            enum: ["Draft", "Published"],
+          },
         RatingAndReviews: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -39,7 +44,7 @@ const productSchema = new mongoose.Schema(
             type: Date,
             default: Date.now,
         },
-        status: {
+        productstatus: {
             type: String,
             enum: ["available", "out of stock"],
             default: "available",

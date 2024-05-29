@@ -44,7 +44,7 @@ function Home() {
 
     <div className = "flex lg:flex-row my-10 justify-between flex-col lg:gap-1 gap-2">
       {/* left side*/}
-      <div className=" bg-opacity-1 lg:w-[40%] w-[100%] h-70 ml-5 flex flex-col gap-8  p-5 border rounded border-l-caribbeangreen-5 bg-image-box bg-[url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\business-home.jpeg')]  bg-cover "> 
+      <div className=" bg-opacity-1 lg:w-[40%] w-[100%] h-70 ml-5 flex flex-col gap-8  p-5 border rounded border-l-caribbeangreen-5 bg-image-box bg-[url('D:\WEB DEVELOPMENT PROJECTS\MINIPROJECT\miniProject\src\assets\Images\business-home.jpeg')]  bg-cover "> 
 
           {/* Heading */} 
           <div className="text-4xl text-caribbeangreen-900 font-semibold">
@@ -74,15 +74,15 @@ function Home() {
           
         <div className="lg:w-[50%] w-[100%] flex flex-row justify-center mr-5  gap-4  h-86">
       
-           <div className="w-64 md:min-h-full border  border-l-caribbeangreen-5 bg-[url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\service-home.avif')] bg-cover bg-center bg-image-box flex items-end justify-center text-caribbeangreen-900 text-xl font-bold shadow-lg rounded-lg">
+           <div className="w-64 md:min-h-full border  border-l-caribbeangreen-5 bg-[url('D:\WEB DEVELOPMENT PROJECTS\MINIPROJECT\miniProject\src\assets\Images\service-home.avif')] bg-cover bg-center bg-image-box flex items-end justify-center text-caribbeangreen-900 text-xl font-bold shadow-lg rounded-lg">
               Services
            </div>
 
-           <div className="w-64 min-h-full bg-[url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\products-home.png')] bg-cover bg-center bg-image-box flex items-end justify-center text-caribbeangreen-900 text-xl font-bold shadow-lg rounded-lg">
+           <div className="w-64 min-h-full bg-[url('D:\WEB DEVELOPMENT PROJECTS\MINIPROJECT\miniProject\src\assets\Images\products-home.png')] bg-cover bg-center bg-image-box flex items-end justify-center text-caribbeangreen-900 text-xl font-bold shadow-lg rounded-lg">
               Products
            </div>
 
-           <div className="w-64 min-h-full bg-[url('C:\Users\DELL\Desktop\miniProject\src\assets\Images\rent-home.jpg')]  bg-cover bg-center bg-image-box flex items-end justify-center text-caribbeangreen-900 text-xl font-bold shadow-lg rounded-lg">
+           <div className="w-64 min-h-full bg-[url('D:\WEB DEVELOPMENT PROJECTS\MINIPROJECT\miniProject\src\assets\Images\rent-home.jpg')]  bg-cover bg-center bg-image-box flex items-end justify-center text-caribbeangreen-900 text-xl font-bold shadow-lg rounded-lg">
               Rentals
            </div>
     

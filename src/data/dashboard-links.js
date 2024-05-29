@@ -79,8 +79,8 @@ export const sidebarLinks = [
   },
   {
     id: 12,
-    name: "Add Service",
-    path: "/dashboard/add-service",
+    name: "Add",
+    path: "/dashboard/add",
     type: ACCOUNT_TYPE.PROVIDER,
     icon: "VscAdd", 
   }

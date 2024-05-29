@@ -13,7 +13,7 @@ import {
 
 import{
   fetchAllCategories
-} from "../../../../../services/operations/categoryDetails"
+} from "../../../../../services/operations/categoryDetailsAPI"
 
 import { setService, setStep } from "../../../../../slices/serviceSlice"
 import { STATUS } from "../../../../../utils/constants"

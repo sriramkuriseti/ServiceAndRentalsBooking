@@ -23,13 +23,15 @@ exports.signup = async (req, res) => {
       contactNumber,
       otp,
     } = req.body
+
+    console.log(" contactNumber :",contactNumber)
     // Check if All Details are there or not
     if (
       !firstName ||
       !lastName ||
       !email ||
       !password ||
-      !confirmPassword ||
+      !confirmPassword || !contactNumber ||
       !otp
     ) {
       return res.status(403).send({
@@ -57,6 +59,8 @@ exports.signup = async (req, res) => {
 
     // Find the most recent OTP for the email
     const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1)
+    console.log(" otp :",response[0].otp )
+    console.log(" entered otp :",otp)
     console.log(response)
     if (response.length === 0) {
       // OTP not found for the email
@@ -74,20 +78,27 @@ exports.signup = async (req, res) => {
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10)
-
+    const profileDetails = await Profile.create({
+      gender: null,
+      dateOfBirth: null,
+      about: null,
+      address: null,
+    })
     const user = await User.create({
       firstName,
       lastName,
       email,
-      contactNumber,
+      contactNumber: contactNumber,
+      additionalDetails: profileDetails._id,
       password: hashedPassword,
       accountType: accountType,
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
     })
-
+    
+    console.log(" user :",user)
     return res.status(200).json({
       success: true,
-      user,
+      data : user,
       message: "User registered successfully",
     })
   } catch (error) {

@@ -13,8 +13,9 @@ const router = express.Router()
 const {
   createCategory,
   getAllCategories,
-  deleteCategory,
   updateCategory,
+  getCategoryDetails,
+
   getServicesUnderCategory,
   getProductsUnderCategory,
   getRentsUnderCategory,
@@ -30,16 +31,14 @@ const { auth,  isAdmin } = require("../middleware/Auth")
 // Category can Only be Created by Admin
 // TODO: Put IsAdmin Middleware here
 
-router.post("/createCategory", createCategory)
-router.delete("/deleteCategory/:categoryId", auth,isAdmin,deleteCategory);
-router.put("/updateCategory/:id", auth,isAdmin,updateCategory);
-
+router.post("/createCategory", auth, isAdmin, createCategory)
 router.get("/getAllCategories", getAllCategories)
+router.put("/editCategory/:id",auth,isAdmin,updateCategory);
+router.get("/getCategoryDetails/:id",auth,isAdmin,getCategoryDetails);
 
-router.get("/getcategoryPageDetails/:categoryId", getcategoryPageDetails);
-
-router.get("/getServicesUnderCategory/:categoryId", getServicesUnderCategory)
-router.get("/getProductsUnderCategory/:categoryId", getProductsUnderCategory)
-router.get("/getRentsUnderCategory/:categoryId", getRentsUnderCategory)
+router.get("/getcategoryPageDetails/:id", getcategoryPageDetails);
+router.get("/getServicesUnderCategory/:id", getServicesUnderCategory)
+router.get("/getProductsUnderCategory/:id", getProductsUnderCategory)
+router.get("/getRentsUnderCategory/:id", getRentsUnderCategory)
 
 module.exports = router;
