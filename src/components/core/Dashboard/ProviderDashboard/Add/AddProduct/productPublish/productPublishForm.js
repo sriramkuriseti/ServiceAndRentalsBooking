@@ -55,9 +55,11 @@ export default function ProductPublishForm() {
     setLoading(false)
   }
 
-  const onSubmit = (data) => {
-    handleProductPublish()
-    navigate("/dashboard/my-products")
+  const onSubmit = (data) => 
+    {
+    handleProductPublish().then(() => {
+      navigate("/dashboard/my-products")
+    });
   }
 
   return (

@@ -48,7 +48,7 @@ export default function Add() {
         </div>
 
         {/* Row 3 */}
-        <div className="flex-1 bg-gray-600 rounded-md overflow-hidden shadow-lg">
+        {/* <div className="flex-1 bg-gray-600 rounded-md overflow-hidden shadow-lg">
           <div className="p-6 flex items-center justify-center">
             <img
               src={productLogo}
@@ -63,7 +63,7 @@ export default function Add() {
             >
             </IconBtn>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

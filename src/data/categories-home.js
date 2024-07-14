@@ -21,28 +21,38 @@ import selfCare from '../assets/Images/selfCare-home.jpg';
 import Transportation from '../assets/Images/Transportation-home.png';
 import Twowheelers from '../assets/Images/Two-wheelers-home.jpg';
 
+import Service from '../assets/Images/service-home.avif'
+import Product from '../assets/Images/products-home.png'
+import Rent from '../assets/Images/rent-home.jpg'
 // ... import the rest of the images
 
 export const ImagesObject = [
-  { src: Agriculture, title: 'Agriculture' },
-  { src: Construction, title: 'Construction' },
-  { src: Ececticity, title: 'Ececticity' },
-  { src: Education, title: 'Education' },
-  { src: Electronic, title: 'Electronic' },
-  { src: Estate, title: 'Estate' },
-  { src: Event, title: 'Event' },
-  { src: Health, title: 'Health' },
-  { src: HomeKeeping, title: 'HomeKeeping' },
-  { src: Hotel, title: 'Hotel' },
-  { src: Lawers, title: 'Lawers' },
+  { src: Agriculture, title: 'Agriculture' ,link: "/catalog/agriculture" },
+  { src: Construction, title: 'Construction' ,link: "/catalog/construction"},
+  { src: Ececticity, title: 'Ececticity',link: "/catalog/electician"},
+  { src: Education, title: 'Education' ,link: "/catalog/Education"},
+  { src: Electronic, title: 'Electronic' ,link: "/catalog/Electronic"},
+  { src: Estate, title: 'Estate',link: "/catalog/Estate" },
+  { src: Event, title: 'Event',link: "/catalog/Event" },
+  { src: Health, title: 'Health',link: "/catalog/Health" },
+  { src: HomeKeeping, title: 'HomeKeeping' ,link: "/catalog/HomeKeeping"},
+  { src: Hotel, title: 'Hotel' ,link: "/catalog/Hotel"},
+  { src: Lawers, title: 'Lawers',link: "/catalog/Lawers" },
 
-  { src: Mechanic, title: 'Mechanic' },
-  { src: petGromming, title: 'Pet Gromming' },
-  { src: Plumbing, title: 'Plumbing' },
-  { src: Restaurant, title: 'Restaurant' },
+  { src: Mechanic, title: 'Mechanic',link: "/catalog/Mechanic" },
+  { src: petGromming, title: 'Pet Gromming' ,link: "/catalog/PetGromming"},
+  { src: Plumbing, title: 'Plumbing',link: "/catalog/Plumbing" },
+  { src: Restaurant, title: 'Restaurant' ,link: "/catalog/Restaurant"},
 //   { src: Scrap, title: 'Scrap' },
-  { src: selfCare, title: 'Self Care' },
-  { src: Transportation, title: 'Transportation' },
-  { src: Twowheelers, title: 'Two-wheelers' },
+  { src: selfCare, title: 'Self Care' ,link: "/catalog/SelfCare"},
+  { src: Transportation, title: 'Transportation' ,link: "/catalog/Transportation"},
+  { src: Twowheelers, title: 'Two-wheelers',link: "/catalog/Two-wheelers" },
+  // ... add the rest of the images and titles
+];
+
+export const ImagesObject1 = [
+  { src: Service, title: 'Service' },
+  { src: Rent, title: 'Rent' },
+  // { src: Product, title: 'Product' },
   // ... add the rest of the images and titles
 ];

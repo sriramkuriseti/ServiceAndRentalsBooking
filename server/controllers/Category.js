@@ -138,7 +138,7 @@ exports.getServicesUnderCategory = async (req, res) => {
 
   exports.getCategoryDetails = async (req,res ) => {
     try {
-      const { id } = req.params;
+      const { id } = req.params
   
       // Get category details including services, products, and rents
       const selectedCategory = await Category.findById(id).populate("services products rents").exec();
@@ -158,38 +158,35 @@ exports.getServicesUnderCategory = async (req, res) => {
   // Category Page Details
   exports.getcategoryPageDetails = async (req, res) => {
     try {
-      const { categoryId } = req.params;
+      const { categoryId } = req.body
   
       // Get category details including services, products, and rents
-      const selectedCategory = await Category.findById(categoryId).populate("services product rent").exec();
+      const selectedCategory = await Category.findById(categoryId)
+      .populate({
+        path: "services",
+        match: { status: "Published" },
+        populate: "ratingAndReviews",
+      })
+      .populate({
+        path: "products",
+        match: { status: "Published" },
+        populate: "ratingAndReviews",
+      })
+      .populate({
+        path: "rents",
+        match: { status: "Published" },
+        populate: "ratingAndReviews",
+      }).exec();
   
       // Handle the case when the category is not found
       if (!selectedCategory) {
         return res.status(404).json({ success: false, message: "Category not found" });
       }
-  
-      // Get top-selling services, products, and rents across all categories
-      const allCategories = await Category.find()
-        .populate("services")
-        .populate("products")
-        .populate("rents")
-        .exec();
-  
-      const allServices = allCategories.flatMap((category) => category.services);
-      const allProducts = allCategories.flatMap((category) => category.products);
-      const allRents = allCategories.flatMap((category) => category.rents);
-  
-      const topSellingServices = allServices.sort((a, b) => b.sold - a.sold).slice(0, 10);
-      const topSellingProducts = allProducts.sort((a, b) => b.sold - a.sold).slice(0, 10);
-      const topSellingRents = allRents.sort((a, b) => b.sold - a.sold).slice(0, 10);
-  
+
       res.status(200).json({
         success: true,
         data: {
           selectedCategory,
-          topSellingServices,
-          topSellingProducts,
-          topSellingRents,
         },
       });
     } catch (error) {

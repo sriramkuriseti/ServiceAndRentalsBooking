@@ -14,7 +14,11 @@ const serviceSlotsSchema = new mongoose.Schema({
             type: String,
             enum: ["available", "booked"],
             default: "available"
-        }
+        },
+        progress: {  type: String,
+            enum: ["Not Intiated","Intiated","InProgress","Completed","Cancelled"],
+            default : "Not Intiated"
+        },
     }
 });
 

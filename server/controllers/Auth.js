@@ -95,7 +95,7 @@ exports.signup = async (req, res) => {
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
     })
     
-    console.log(" user :",user)
+    // console.log(" user :",user)
     return res.status(200).json({
       success: true,
       data : user,
@@ -126,8 +126,17 @@ exports.login = async (req, res) => {
     }
 
     // Find user with provided email
-    const user = await User.findOne({ email }).populate("additionalDetails")
-
+    const user = await User.findOne({ email })
+    .populate("additionalDetails")
+    .populate({
+      path: "wishlist.services",
+      model: "service",
+    })
+    .populate({
+      path: "wishlist.rents",
+      model: "rent",
+    });
+    
     // If user not found with provided email
     if (!user) {
       // Return 401 Unauthorized status code with error message

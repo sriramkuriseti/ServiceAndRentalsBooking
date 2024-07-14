@@ -38,10 +38,10 @@ const CourseCard = ({cardData, currentCard, setCurrentCard}) => {
         </div>
 
         {/* Flow Chart */}
-        <div className="flex items-center gap-2 text-[16px]">
+        {  cardData?.lessionNumber && <div className="flex items-center gap-2 text-[16px]">
           <ImTree />
-          <p>{cardData?.lessionNumber} Lession</p>
-        </div>
+          <p>{cardData?.lessionNumber} sessions</p>
+        </div>}
       </div>
     </div>
   );

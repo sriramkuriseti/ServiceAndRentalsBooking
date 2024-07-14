@@ -7,13 +7,14 @@
 
 const express = require("express")
 const router = express.Router()
-const { auth, isInstructor } = require("../middleware/Auth")
+const { auth,  isProvider } = require("../middleware/Auth")
 const {
   deleteAccount,
   updateProfile,
   getAllUserDetails,
   updateDisplayPicture,
-  instructorDashboard,
+  providerDashboardServiceData,
+  providerDashboardRentItemData
 } = require("../controllers/Profile")
 
 // ********************************************************************************************************
@@ -24,7 +25,9 @@ router.delete("/deleteProfile", auth, deleteAccount)
 router.put("/updateProfile", auth, updateProfile)
 router.get("/getUserDetails", auth, getAllUserDetails)
 router.put("/updateDisplayPicture", auth, updateDisplayPicture)
-//router.get("/instructorDashboard", auth, isInstructor, instructorDashboard)
+router.post("/providerDashboardServiceData", auth, isProvider, providerDashboardServiceData)
+router.post("/providerDashboardRentItemData", auth, isProvider, providerDashboardRentItemData)
+
 
 module.exports = router
 

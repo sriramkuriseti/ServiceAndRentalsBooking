@@ -9,13 +9,13 @@ export default function RequirementsField({
   errors,
   getValues,
 }) {
-  const { editCourse, course } = useSelector((state) => state.course)
+  const { editService, service } = useSelector((state) => state.service)
   const [requirement, setRequirement] = useState("")
   const [requirementsList, setRequirementsList] = useState([])
 
   useEffect(() => {
-    if (editCourse) {
-      setRequirementsList(course?.instructions)
+    if (editService) {
+      setRequirementsList(service?.instructions)
     }
     register(name, { required: true, validate: (value) => value.length > 0 })
     // eslint-disable-next-line react-hooks/exhaustive-deps

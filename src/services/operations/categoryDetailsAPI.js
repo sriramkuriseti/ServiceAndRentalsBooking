@@ -3,7 +3,11 @@ import { toast } from "react-hot-toast"
 import { apiConnector } from "../apiConnector"
 import { categories } from "../apis"
 
-const { FETCH_CATEGORIES_API, CREATE_CATEGORY, EDIT_CATEGORY, GET_CATEGORY_DETAILS }= categories;
+const { FETCH_CATEGORIES_API,
+        CREATE_CATEGORY,
+         EDIT_CATEGORY,
+          GET_CATEGORY_PAGE_DETAILS
+         }= categories;
 
 export const fetchAllCategories = async () => {
   let result = []
@@ -68,19 +72,23 @@ export const updateCategory = async (data, id, token) => {
   return result;
 };
 
-export const getCategoryDetails = async (id, token) => {
-  let result = null;
+export const getCategoryPageDetails = async (categoryId) => {
+  let result = [];
   const toastId = toast.loading("Loading...");
   try {
-    const response = await apiConnector("GET", GET_CATEGORY_DETAILS.replace(":id", id), null, {
-      Authorization: `Bearer ${token}`,
-    });
+    const response = await apiConnector(
+      "POST", 
+      GET_CATEGORY_PAGE_DETAILS,
+       {
+        categoryId: categoryId,
+      });
+
     console.log("GET CATEGORY DETAILS API RESPONSE............", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Retrieve Category Details");
     }
     toast.success("Category Details Retrieved Successfully");
-    result = response?.data?.data;
+    result = response?.data;
   } catch (error) {
     console.log("GET CATEGORY DETAILS API ERROR............", error);
     toast.error(error.message);

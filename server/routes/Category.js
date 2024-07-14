@@ -36,7 +36,7 @@ router.get("/getAllCategories", getAllCategories)
 router.put("/editCategory/:id",auth,isAdmin,updateCategory);
 router.get("/getCategoryDetails/:id",auth,isAdmin,getCategoryDetails);
 
-router.get("/getcategoryPageDetails/:id", getcategoryPageDetails);
+router.post("/getcategoryPageDetails", getcategoryPageDetails);
 router.get("/getServicesUnderCategory/:id", getServicesUnderCategory)
 router.get("/getProductsUnderCategory/:id", getProductsUnderCategory)
 router.get("/getRentsUnderCategory/:id", getRentsUnderCategory)

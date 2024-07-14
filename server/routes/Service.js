@@ -2,57 +2,71 @@
 const express = require("express")
 const router = express.Router()
 
-
-// Categories Controllers Import
 const {
   createService,
   updateService,
-  getAllServices,
+  cancelService,
   getServiceDetails,
   deleteService,
-  updateServiceProgress,
+  updateServiceSlotProgress,
+  getProviderServices,
   bookService,
   checkServiceStatus,
-  cancelService,
-  getAllBookedServices,
+  getAllServices,
   getAllUsersOfService
 } = require("../controllers/Service")
 
 const {
   createServiceSlots,
+  getSlotsOfServiceItem,
+  getServiceSlotDetails,
+  getServicesBookedByUser,
   updateServiceSlots,
   deleteServiceSlots,
-  getSlotsOfServiceItem
 } = require("../controllers/ServiceSlots")
 
 
 // Importing Middlewares
-const { auth, isUser, isAdmin, isProvider } = require("../middleware/Auth")
+const { auth, isUser, isProvider } = require("../middleware/Auth")
 
 // ********************************************************************************************************
 //                                      provider routes 
 // ********************************************************************************************************
 
 router.post("/createService", auth, isProvider, createService)
-router.put("/updateService/:id", auth, isProvider, updateService)
-router.get("/getAllServices", getAllServices)
-router.get("/getServiceDetails/:id", getServiceDetails)
-router.delete("/deleteService/:id", auth, isProvider, deleteService)
-router.put("/updateServiceProgress/:id", auth, isProvider, updateServiceProgress)
+router.put("/updateService", auth, isProvider, updateService)
+router.post("/getProviderServices",auth,isProvider,getProviderServices);
+router.delete("/deleteService", auth, isProvider, deleteService)
+router.post("/updateServiceSlotProgress", auth, isProvider, updateServiceSlotProgress)
 
-router.post("/createServiceSlots", auth, isProvider, createServiceSlots)
-router.put("/updateServiceSlots/:id", auth, isProvider, updateServiceSlots)
-router.delete("/deleteServiceSlots/:id", auth, isProvider, deleteServiceSlots)
-router.get("/getSlotsOfService/:id", getSlotsOfServiceItem)
+//------------------------------unused------------------------------------------------------------
+//router.get("/getAllUsersOfService", auth,getAllUsersOfService)
+
+
 // ********************************************************************************************************
 //                                      customer routes 
 // ********************************************************************************************************
+router.put("/bookService",auth,isUser, bookService)
+router.post("/cancelService", auth,isUser, cancelService)
+router.post("/getServicesBookedByUser", auth, isUser, getServicesBookedByUser)
+router.post("/getServiceDetails", getServiceDetails)
 
-router.post("/bookService",auth,isUser, bookService)
-router.put("/cancelService", auth,isUser, cancelService)
-router.get("/checkServiceStatus", auth,isUser, checkServiceStatus)
-router.get("/getAllBookedServices", auth, isUser, getAllBookedServices)
-router.get("/getAllUsersOfService/:serviceId", auth,getAllUsersOfService)
 
+//------------------------------unused------------------------------------------------------------
+//router.get("/checkServiceStatus", auth,isUser, checkServiceStatus)
+//router.get("/getAllServices", getAllServices)
+
+
+// ********************************************************************************************************
+//                                      slots routes 
+// ********************************************************************************************************
+router.post("/createServiceSlots", auth, isProvider, createServiceSlots)
+router.post("/getSlotsOfService", getSlotsOfServiceItem)
+router.post("/getServiceSlotDetails", auth, isProvider,getServiceSlotDetails)
+
+
+//------------------------------unused------------------------------------------------------------
+//router.put("/updateServiceSlots", auth, isProvider, updateServiceSlots)
+//router.delete("/deleteServiceSlots", auth, isProvider, deleteServiceSlots)
 
 module.exports = router

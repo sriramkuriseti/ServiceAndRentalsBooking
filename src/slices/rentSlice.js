@@ -5,6 +5,7 @@ const initialState = {
   rent: null,
   editRent: false,
   paymentLoading: false,
+  enableWriteReview : false
 };
 
 const rentSlice = createSlice({
@@ -23,6 +24,9 @@ const rentSlice = createSlice({
     setPaymentLoading: (state, action) => {
       state.paymentLoading = action.payload;
     },
+    setWriteReview : (state ,action) => {
+      state.enableWriteReview = action.payload
+    },
     resetRentState: (state) => {
       state.step = 1;
       state.rent = null;
@@ -36,6 +40,7 @@ export const {
   setRent,
   setEditRent,
   setPaymentLoading,
+  setWriteReview,
   resetRentState,
 } = rentSlice.actions;
 

@@ -34,7 +34,7 @@ const productSchema = new mongoose.Schema(
             type: String,
             enum: ["Draft", "Published"],
           },
-        RatingAndReviews: [
+        ratingAndReviews: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "RatingAndReview",

@@ -52,6 +52,17 @@ const userSchema = new mongoose.Schema(
                     ref: "rent",
                 },
         ],
+        wishlist:{
+            services : [
+             {   type:mongoose.Schema.Types.ObjectId,
+                ref:"service",
+            }
+            ],
+            rents : [{
+                type : mongoose.Schema.Types.ObjectId,
+                ref : "rent",
+            }]
+        },
         // serviceProgress: {
         //     type: mongoose.Schema.Types.ObjectId,
         //     ref: "ServiceProgress",
@@ -73,6 +84,7 @@ const userSchema = new mongoose.Schema(
         resetPasswordExpires: {
             type: Date,
         },
+
     },
     { timestamps: true }
 );

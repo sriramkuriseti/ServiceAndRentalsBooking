@@ -8,6 +8,8 @@ const {
     createRating ,
     getAverageRating,
     getAllRatingReview ,
+    getServiceRatingReview,
+    getRentItemRatingReview
 } = require("../controllers/RatingAndReviews")
 
 const { isUser, auth } = require('../middleware/Auth');
@@ -19,5 +21,7 @@ const { isUser, auth } = require('../middleware/Auth');
 router.post("/createRating", auth, isUser, createRating)
 router.get("/getAverageRating", getAverageRating)
 router.get("/getAllRatingReview", getAllRatingReview)
+router.post("/getServiceRatingReview", getServiceRatingReview)
+router.post("/getRentItemRatingReview", getRentItemRatingReview)
 
 module.exports = router

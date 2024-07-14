@@ -10,6 +10,10 @@ const serviceSchema = new mongoose.Schema({
         type: String ,
         required:true
     },
+    location: {
+      type: String ,
+      required:true
+  },
   provider: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -28,6 +32,8 @@ const serviceSchema = new mongoose.Schema({
   status: {
 		type: String,
 		enum: ["Draft", "Published"],
+    default:"Draft",
+    required:true
 	  },
   thumbnail: {
     type: String,
@@ -44,8 +50,15 @@ const serviceSchema = new mongoose.Schema({
     ref : "ServiceSlots",
     required:true
   },
+  
 ],
-  since: { type: Date, default: Date.now },
+whatYouWillLearn: {
+  type: String,
+},
+instructions: {
+  type: [String],
+},
+  Since: { type: Date, default: Date.now },
 })
 
 module.exports = mongoose.model("service", serviceSchema)

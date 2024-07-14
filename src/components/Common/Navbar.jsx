@@ -10,6 +10,7 @@ import { NavbarLinks } from "../../data/navbar-links";
 import { fetchAllCategories } from "../../services/operations/categoryDetailsAPI";
 import { ACCOUNT_TYPE } from "../../utils/constants";
 import ProfileDropdown from "../core/Auth/ProfileDropdown";
+import { FaHeart } from "react-icons/fa";
 
 function Navbar() {
   const { token } = useSelector((state) => state.auth);
@@ -117,8 +118,8 @@ function Navbar() {
         {/* Login / Signup / Dashboard */}
         <div className="hidden items-center gap-x-4 md:flex">
           {user && user.accountType === ACCOUNT_TYPE.USER && (
-            <Link to="/dashboard/cart" className="relative">
-              <AiOutlineShoppingCart className="text-2xl text-richblack-100" />
+            <Link to="/dashboard/wishlist/services" className="relative pr-3">
+              <FaHeart className="text-2xl text-richblack-100" />
               {totalItems > 0 && (
                 <span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
                   {totalItems}

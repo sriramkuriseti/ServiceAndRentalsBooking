@@ -7,6 +7,8 @@ import categoryReducer from "../slices/categorySlice"
 import productreducer from "../slices/productSlice"
 import rentReducer from "../slices/rentSlice"
 import serviceReducer from "../slices/serviceSlice"
+import wishlistReducer from "../slices/wishlist"
+
 
 
 const rootReducer = combineReducers({
@@ -17,6 +19,7 @@ const rootReducer = combineReducers({
   product: productreducer,
   rent:rentReducer,
   service: serviceReducer,
+  wishlist:wishlistReducer 
 })
 
 export default rootReducer

@@ -5,6 +5,7 @@ const initialState = {
   service: null,
   editService: false,
   paymentLoading: false,
+  enableWriteReview : false
 }
 
 const serviceSlice = createSlice({
@@ -23,6 +24,9 @@ const serviceSlice = createSlice({
     setPaymentLoading: (state, action) => {
       state.paymentLoading = action.payload
     },
+    setWriteReview : (state ,action) => {
+      state.enableWriteReview = action.payload
+    },
     resetServiceState: (state) => {
       state.step = 1
       state.service = null
@@ -36,6 +40,7 @@ export const {
   setService,
   setEditService,
   setPaymentLoading,
+  setWriteReview,
   resetServiceState,
 } = serviceSlice.actions
 

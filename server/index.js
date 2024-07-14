@@ -9,6 +9,7 @@ const productRoutes = require("./routes/Product");
 const rentRoutes = require("./routes/Rent");
 const categoryRoutes = require("./routes/Category");
 const ratingRoutes = require("./routes/RatingAndReviews");
+const wishlistRoutes = require("./routes/wishlist");
 
 
 // Connecting to database
@@ -43,12 +44,10 @@ app.use(cookieParser());
 // cloudinaryConnect();
 
 const fileUpload = require("express-fileupload");
-app.use(
-	fileUpload({
-		useTempFiles: true,
-		tempFileDir: "/tmp/",
-	})
-);
+app.use(fileUpload({
+	useTempFiles: true,
+	tempFileDir: '/tmp/'
+  }));
 
 
 // Setting up routes
@@ -59,6 +58,7 @@ app.use("/api/v1/service", serviceRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/rent", rentRoutes);
 app.use("/api/v1/rating", ratingRoutes);
+app.use("/api/v1/wishlist",wishlistRoutes);
 
 
 

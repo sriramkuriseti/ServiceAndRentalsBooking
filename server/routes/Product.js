@@ -9,7 +9,8 @@ const {
     getProductDetails,
     deleteProduct,
     updateProductProgress,
-    
+    getAllProductsByProvider,
+
     BookProduct,
     CancelProduct,
     ReturnProduct,
@@ -26,7 +27,7 @@ router.get("/getAllProducts", getAllProducts)
 router.get("/getProductDetails/:id", getProductDetails)
 router.delete("/deleteProduct/:id", auth, isProvider, deleteProduct)
 router.put("/updateProductProgress/:productID", auth, isProvider, updateProductProgress)
-
+router.get("/getAllProductsByProvider",auth,isProvider,getAllProductsByProvider)
 /* ----------------CUSTOMER SIDE --------------- */
 
 router.post("/bookProduct/:productId",auth,isUser, BookProduct)

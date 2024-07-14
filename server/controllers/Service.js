@@ -5,84 +5,98 @@ const ServiceProgress= require('../models/ServiceProgress');
 const Slot=require('../models/ServiceSlots');
 const RatingAndReview= require('../models/RatingAndReviews');
 const { uploadImageToCloudinary }= require('../utils/ImageUploder');
-/* --------------PRODUCER SIDE ----------------*/
-// 1. create service (post)
-exports.createService = async (req, res) => {
-    try {
-        // Destructure fields from the request body
-        const {
-            name,
-            description,
-            location,
-            price,
-            category,
-            // whatYouWillLearn,
-            // instructions
-        } = req.body;
-        const userId = req.user.id;
-        let thumbnailUrl="";
 
-        // Check if all required fields are present
-        if (
-            !name ||
-            !description ||
-            !location ||
-            !price ||
-            !category //||
-            // !whatYouWillLearn||
-            // !instructions
-        ) {
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+exports.createService = async (req, res) => {
+
+    try {
+
+        const userId = req.user.id; 
+
+        const { name,
+               description,
+               whatYouWillLearn, 
+               instructions: _instructions,
+               location, 
+               price, 
+               category 
+            } = req.body;
+    // Convert the tag and instructions from stringified Array to Array
+ 
+    const instructions = JSON.parse(_instructions)
+
+    
+    console.log("instructions", instructions)
+        let thumbnailUrl = "";
+        const thumbnail = req.files.thumbnailImage;
+
+        console.log(userId);
+        console.log(name);
+        console.log(description);
+        console.log(location);
+        console.log(price);
+        console.log(category);
+          // Log received data for debugging
+          console.log("Received data:", req.body);
+          console.log("Received files:", req.files);
+
+        if (!name || !description || !location || !price || !category || !whatYouWillLearn || !instructions.length ) {
             return res.status(400).json({
                 success: false,
                 message: 'All required fields are not provided.',
             });
         }
 
-        
-        // Check if the user exists
         const user = await User.findById(userId);
         if (!user) {
-          return res.status(404).json({ 
+            return res.status(404).json({ 
                 success: false,
                 message: "User not found" 
             });
         }
 
-        if(req.files)
-            {
-                const thumbnail = req.files.thumbnailImage;
-                const thumbnailImage = await uploadImageToCloudinary(
-                    thumbnail,
-                    process.env.FOLDER_NAME
-                );
-                console.log(thumbnailImage);
-                thumbnailUrl=thumbnailImage.secure_url;
+        if (req.files && req.files.thumbnailImage) {
+            console.log("File details:", req.files.thumbnailImage); // Debugging line
+            if (!thumbnail.tempFilePath) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid file upload.',
+                });
             }
-        
+            const thumbnailImage = await uploadImageToCloudinary(
+                thumbnail,
+                process.env.FOLDER_NAME
+            );
+            console.log(thumbnailImage);
+            thumbnailUrl = thumbnailImage.secure_url;
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: 'Thumbnail image is required.',
+            });
+        }
 
-        // Create the service
         const service = await Service.create({
-            serviceName:name,
-            serviceDescription:description,
-            // whatYouWillLearn,
-            // instructions,
-            serviceProvider: userId,
+            name,
+            description,
+            provider: userId,
             location,
-            ratingAndReviews:[],
+            ratingAndReviews: [],
             price,
-            thumbnail:thumbnailUrl,
+            thumbnail: thumbnailUrl,
             category,
-            slots:[]
+            slots: [],
+            whatYouWillLearn: whatYouWillLearn,
+            instructions
         });
 
-        // Update the user's services array with the new service ID
         await User.findByIdAndUpdate(
             req.user.id,
             { $push: { services: service._id } },
             { new: true }
         );
 
-        // Update the category's services array with the new service ID
         await Category.findByIdAndUpdate(
             category,
             { $push: { services: service._id } },
@@ -96,6 +110,7 @@ exports.createService = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
+        console.error("Error details:", error);
         return res.status(500).json({
             success: false,
             message: 'Service creation failed. Please try again.',
@@ -103,14 +118,15 @@ exports.createService = async (req, res) => {
     }
 };
 
-// 2.update specific service (put)
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 exports.updateService = async (req, res) => {
     try {
-        const { id } = req.params; // Get the service ID from params
+        const { serviceId } = req.body; // Get the service ID from request body
         const updateFields = req.body; // Get the update fields from request body
 
         // Check if the service exists
-        const service = await Service.findById(id);
+        const service = await Service.findById(serviceId);
         if (!service) {
             return res.status(404).json({
                 success: false,
@@ -126,61 +142,72 @@ exports.updateService = async (req, res) => {
             });
         }
 
-        // gets the keys from the updatefields of json object
-        const validFields = Object.keys(updateFields);
-        //filters the allowed fields from service schema
-        const allowedFields = Object.keys(Service.schema.paths).filter(
-            field => field !== 'serviceProvider' && field !== 'ratingAndReviews'
-        );
-        
-
-        //checks if every update filed is in allowed fields
-        //if any one of the update field is not in the allowed fields it will be false
-        const isValidOperation = validFields.every(field => allowedFields.includes(field));
-        if (!isValidOperation) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid update fields',
-            });
+        // Handle thumbnail image update
+        if (req.files && req.files.thumbnailImage) {
+            const thumbnail = req.files.thumbnailImage;
+            const thumbnailImage = await uploadImageToCloudinary(
+                thumbnail,
+                process.env.FOLDER_NAME
+            );
+            service.thumbnail = thumbnailImage.secure_url;
         }
 
-        if(req.files)
-            {
-                const thumbnail=req.files.thumbnailImage;
-                const thumbnailImage = await uploadImageToCloudinary(
-                    thumbnail,
-                    process.env.FOLDER_NAME
-                );
-                service.thumbnail=thumbnailImage.secure_url;
-            }
-
-        // Update the service
-        Object.keys(updateFields).forEach(async field => {
+        // Update the service fields
+        for (const field of Object.keys(updateFields)) {
             if (field === 'category') {
                 // Remove the service ID from the previous category's services array
-                await Category.findByIdAndUpdate(service.category, { $pull: { services: id } });
+                await Category.findByIdAndUpdate(service.category, { $pull: { services: serviceId } });
 
                 // Update the service's category
                 service.category = updateFields[field];
 
                 // Add the service ID to the new category's services array
-                await Category.findByIdAndUpdate(updateFields[field], { $push: { services: id } });
+                await Category.findByIdAndUpdate(updateFields[field], { $push: { services: serviceId } });
             } else if (field === 'slots') {
                 // Append the new slots array to the existing array
                 service.slots = service.slots.concat(updateFields[field]);
             } else {
                 service[field] = updateFields[field];
             }
-        });
-        await service.save();
+        }
 
+        await service.save();
+        
+        const service1 = await Service.findById(serviceId)
+        .populate({
+            path: 'provider',
+            select: 'firstName lastName email contactNumber',
+        })
+        .populate({
+            path: 'category',
+            select: 'name description',
+        })
+        .populate({
+            path: 'ratingAndReviews',
+            select: 'user rating review',
+            populate: {
+                path: 'user',
+                select: 'firstName lastName email',
+            },
+        })
+        
+        .populate({
+            path: 'slots',
+            select: 'date slot',
+            populate: {
+                path: 'slot.bookedBy',
+                select: 'firstName lastName email',
+            },
+        })
+        .exec();
+        
         return res.status(200).json({
             success: true,
-            service,
+            service1,
             message: 'Service updated successfully',
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error updating service:', error);
         return res.status(500).json({
             success: false,
             message: 'Service update failed. Please try again.',
@@ -188,7 +215,36 @@ exports.updateService = async (req, res) => {
     }
 };
 
-// 3.Get all services
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// Get a list of Course for a given Instructor
+exports.getProviderServices = async (req, res) => {
+    try {
+      // Get the instructor ID from the authenticated user or request body
+      const {userId} = req.body;
+  
+      // Find all courses belonging to the instructor
+      const providerServices = await Service.find({
+        provider : userId,
+      }).sort({ since: -1 })
+  
+      // Return the instructor's courses
+      res.status(200).json({
+        success: true,
+        data: providerServices,
+      })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve provider Services ",
+        error: error.message,
+      })
+    }
+  }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
 exports.getAllServices = async (req, res) => {
     try {
         // Find all rent items and populate all fields of reference
@@ -233,14 +289,180 @@ exports.getAllServices = async (req, res) => {
     }
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// 4. Get specific service details
+exports.deleteService = async (req, res) => {
+    try {
+        const { serviceId } = req.body;
+         // Get the service ID from params
+        // Find the service by ID
+        console.log("service id backend :",serviceId);
+        const service = await Service.findById(serviceId);
+        console.log("service :",service);
+        if (!service) {
+            return res.status(404).json({
+                success: false,
+                message: 'Service not found',
+            });
+        }
+        // Delete all slots associated with the service
+        await Slot.deleteMany({ 'service': serviceId });
+
+        // Remove the service ID from the user's services array
+        await User.updateMany({}, { $pull: { services: serviceId } });
+
+        // Remove the service ID from the category's services array
+        await Category.updateMany({}, { $pull: { services: serviceId } });
+
+        // Delete all rating and reviews associated with the service
+        await RatingAndReview.deleteMany({ 'ID': serviceId });
+
+        // Delete the service
+        await Service.findByIdAndDelete(serviceId);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Service deleted successfully',
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Service deletion failed. Please try again.',
+        });
+    }
+};
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+exports.updateServiceSlotProgress = async (req, res) => {
+  try {
+    const { progress, slotId, serviceId } = req.body;
+
+    // Find the service slot by serviceId and slotId
+    const serviceSlot = await Slot.findOne({ _id: slotId, service: serviceId });
+    
+    if (!serviceSlot) {
+      return res.status(404).json({ success: false, message: "Service slot not found" });
+    }
+
+    // Update the progress field
+    serviceSlot.slot.progress = progress;
+    await serviceSlot.save();
+
+    // Return the updated service slot
+    return res.status(200).json({
+      success: true,
+      data: serviceSlot,
+      message: 'Service slot progress updated successfully'
+    });
+  } catch (error) {
+    console.error("Error updating service slot progress:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+exports.bookService = async (req, res) => {
+    try {
+      const { serviceId, slotId ,userId} = req.body;
+
+
+  
+      // Check if the user exists
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Check if the service exists
+      const service = await Service.findById(serviceId);
+      if (!service) {
+        return res.status(404).json({ success: false, message: "Service not found" });
+      }
+  
+      // Check if the slot exists and is available
+      const result = await Slot.findById(slotId);
+      if (!result) {
+        return res.status(400).json({ success: false, message: "Slot not found" });
+      }
+      if (result.slot.status !== "available") {
+        return res.status(400).json({ success: false, message: "Slot not available" });
+      }
+  
+      // Update slot status to booked and assign bookedBy
+      result.slot.status = "booked";
+      result.slot.progress ="Intiated";
+      result.slot.bookedBy = userId;
+      await result.save();
+      
+      console.log("slot after update :",result);
+  
+      return res.status(200).json({ success: true, message: "Service booked successfully", service });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  };
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// 9. Cancel service 
+exports.cancelService = async (req, res) => {
+    try {
+  
+      const { serviceId ,slotId,userId } = req.body; // Assuming the service ID is sent in the request body
+  
+      console.log("user :",userId);
+      // Check if the user exists
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+      // Check if the service exists
+      const service = await Service.findById(serviceId).populate('slots');
+      if (!service) {
+          return res.status(404).json({ message: 'Service not found' });
+      }
+    
+    // Check if the particular slot of the service is booked by the current user
+    const result = service.slots.find(slot => slot._id.toString() === slotId);
+    if (!result || result.slot.bookedBy.toString() !== userId) {
+        return res.status(400).json({ message: 'Slot not booked by current user' });
+    }
+    
+      // Update the slot status to available in the rent item
+      result.slot.status = 'available';
+      result.slot.progress="Not Intiated"
+      result.slot.bookedBy= null;
+   
+      // Save the updated rent item, user, and rent progress
+      await result.save();
+      await user.save();
+      
+  
+      return res.status(200).json({ message: 'Service cancelled successfully', service });
+    } catch (error) {
+      console.error("Error cancelling service:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  };
+  
+
+  
+//////////////////////////////////////////////////////////////////////////////////////////
+
 exports.getServiceDetails = async (req, res) => {
     try {
-        const { id } = req.params; // Get the service ID from params
+        const { serviceId } = req.body;  // Get the service ID from params
 
         // Find the service by ID
-        const result = await Service.findById(id);
+        console.log(serviceId)
+        const result = await Service.findById(serviceId);
         if (!result) {
             return res.status(404).json({
                 success: false,
@@ -248,9 +470,9 @@ exports.getServiceDetails = async (req, res) => {
             });
         }
         // Find the service by ID and populate all reference fields
-        const service = await Service.findById(id)
+        const service = await Service.findById(serviceId)
         .populate({
-            path: 'serviceProvider',
+            path: 'provider',
             select: 'firstName lastName email contactNumber',
         })
         .populate({
@@ -265,6 +487,7 @@ exports.getServiceDetails = async (req, res) => {
                 select: 'firstName lastName email',
             },
         })
+        
         .populate({
             path: 'slots',
             select: 'date slot',
@@ -295,338 +518,70 @@ exports.getServiceDetails = async (req, res) => {
     }
 };
 
-//5. Delete the specific service
-exports.deleteService = async (req, res) => {
-    try {
-        const { id } = req.params; // Get the service ID from params
+//////////////////////////////////////////////----UNUSED---////////////////////////////////////////////////////////////////
 
-        // Find the service by ID
-        const service = await Service.findById(id);
-        if (!service) {
-            return res.status(404).json({
-                success: false,
-                message: 'Service not found',
-            });
-        }
+// exports.checkServiceStatus = async (req, res) => {
+//   try {
+//     const userId = req.user.id; // Assuming you have middleware to extract user ID from the request
+//     const { serviceId , slotId} = req.body; // Assuming the service ID is sent in the request body
 
-        // Delete all slots associated with the service
-        await Slot.deleteMany({ 'service': id });
+//     console.log(userId," ",serviceId," ",slotId);
+//     // Find the service progress document for the user and service
+//     const serviceProgress = await ServiceProgress.findOne({ serviceID:serviceId, userId,  slotId });
 
-        // Remove the service ID from the user's services array
-        await User.updateMany({}, { $pull: { services: id } });
+//     if (!serviceProgress) {
+//       return res.status(404).json({ success: false, message: "Service progress not found" });
+//     }
 
-        // Remove the service ID from the category's services array
-        await Category.updateMany({}, { $pull: { services: id } });
+//     // Return the status information
+//     return res.status(200).json({
+//       success: true,
+//       data: serviceProgress.orderinfo,
+//     });
+//   } catch (error) {
+//     console.error("Error checking service status:", error);
+//     return res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
 
-        // Delete all rating and reviews associated with the service
-        await RatingAndReview.deleteMany({ 'ID': id });
-
-        // Delete the service progress associated with the service
-        await ServiceProgress.deleteMany({ 'serviceID': id });
-
-        // Delete the service
-        await Service.findByIdAndDelete(id);
-
-        return res.status(200).json({
-            success: true,
-            message: 'Service deleted successfully',
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            success: false,
-            message: 'Service deletion failed. Please try again.',
-        });
-    }
-};
-
-//6. update Service Progress
-exports.updateServiceProgress = async (req, res) => {
-  try {
-    const { id }= req.params;
-    const { progress } = req.body; 
-
-    // Find the rent progress document for the user and Item
-    const serviceProgress = await ServiceProgress.findOne({  slotId:id });
-    console.log(serviceProgress);
-    if (!serviceProgress) {
-      return res.status(404).json({ success: false, message: "Service progress not found" });
-    }
-
-   serviceProgress.orderinfo.push({
-      status: progress,
-      statusAt: Date.now(),
-  });
-    await serviceProgress.save();
-
-    // Return the status information
-    return res.status(200).json({
-      success: true,
-      data: serviceProgress,
-      message:'service  status Updated successfully'
-    });
-  } catch (error) {
-    console.error("Error checking Service status:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
+// /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Get a list of Course for a given Instructor
-exports.getProviderServices = async (req, res) => {
-    try {
-      // Get the instructor ID from the authenticated user or request body
-      const providerId = req.user.id
-  
-      // Find all courses belonging to the instructor
-      const providerServices = await Service.find({
-        serviceProvider : providerId,
-      }).sort({ since: -1 })
-  
-      // Return the instructor's courses
-      res.status(200).json({
-        success: true,
-        data: providerServices,
-      })
-    } catch (error) {
-      console.error(error)
-      res.status(500).json({
-        success: false,
-        message: "Failed to retrieve instructor courses",
-        error: error.message,
-      })
-    }
-  }
+// exports.getAllUsersOfService = async (req, res) => {
+//     const { serviceId } = req.params;
 
-/* --------------CUSTOMER SIDE ----------------*/
-// 7.Book service
-exports.bookService = async (req, res) => {
-    try {
-      const { serviceId, slotId } = req.body;
-      const userId = req.user.id;
-  
-      // Check if the user exists
-      const user = await User.findById(userId);
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Check if the service exists
-      const service = await Service.findById(serviceId);
-      if (!service) {
-        return res.status(404).json({ success: false, message: "Service not found" });
-      }
-  
-      // Check if the slot exists and is available
-      const result = await Slot.findById(slotId);
-      if (!result) {
-        return res.status(400).json({ success: false, message: "Slot not found" });
-      }
-      if (result.slot.status !== "available") {
-        return res.status(400).json({ success: false, message: "Slot not available" });
-      }
-  
-      // Update slot status to booked and assign bookedBy
-      result.slot.status = "booked";
-      result.slot.bookedBy = userId;
-      await result.save();
-      
-      console.log("slot after update :",result);
-      //if service is not present in the user schema then add the service ref
-      if (!user.services.includes(serviceId)) {
-        user.services.push(serviceId);
-        await user.save();
-      }
-  
-      // Create service progress entry
-      const serviceProgress = new ServiceProgress({
-        serviceID: serviceId,
-        userId: userId,
-        slotId: slotId,
-        orderinfo: [ {status: "Intiated"} ] // Assuming you want to set initial status to "Initiated"
-      });
-      await serviceProgress.save();
-      console.log("service Progress :",serviceProgress);
-      return res.status(200).json({ success: true, message: "Service booked successfully", service });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal server error" });
-    }
-  };
-  
-//8.Check service Status
-exports.checkServiceStatus = async (req, res) => {
-  try {
-    const userId = req.user.id; // Assuming you have middleware to extract user ID from the request
-    const { serviceId , slotId} = req.body; // Assuming the service ID is sent in the request body
+//     try {
+//         // Find the service
+//         const service = await Service.findById(serviceId);
+//         if (!service) {
+//             return res.status(404).json({ message: 'Service not found' });
+//         }
 
-    console.log(userId," ",serviceId," ",slotId);
-    // Find the service progress document for the user and service
-    const serviceProgress = await ServiceProgress.findOne({ serviceID:serviceId, userId,  slotId });
+//         // Populate users for each slot
+//         await Service.populate(service, {
+//             path: 'slots',
+//             populate: {
+//                 path: 'slot.bookedBy',
+//                 model: 'user',
+//                 select: 'firstName lastName email contactNumber'
+//             }
+//         });
 
-    if (!serviceProgress) {
-      return res.status(404).json({ success: false, message: "Service progress not found" });
-    }
+//         // Extract unique user information from each slot
+//         const usersMap = new Map();
+//         service.slots.forEach(slot => {
+//                 if (slot.slot.bookedBy) {
+//                     usersMap.set(slot.slot.bookedBy._id.toString(), slot.slot.bookedBy);
+//                 }
 
-    // Return the status information
-    return res.status(200).json({
-      success: true,
-      data: serviceProgress.orderinfo,
-    });
-  } catch (error) {
-    console.error("Error checking service status:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
+//         });
+//         const users = Array.from(usersMap.values());
 
-// 9. Cancel service 
-exports.cancelService = async (req, res) => {
-  try {
-    const userId = req.user.id; // Assuming you have middleware to extract user ID from the request
-    const { serviceId ,slotId } = req.body; // Assuming the service ID is sent in the request body
+//         return res.status(200).json({ users });
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(500).json({ message: 'Internal Server Error' });
+//     }
+// };
 
-    console.log("user :",userId);
-    // Check if the user exists
-    const user = await User.findById(userId);
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-    }
-    // Check if the service exists
-    const service = await Service.findById(serviceId).populate('slots');
-    if (!service) {
-        return res.status(404).json({ message: 'Service not found' });
-    }
-
-  // Check if the service is in the user's services list
-  if (!user.services.includes(serviceId)) {
-      return res.status(400).json({ message: 'Service not serviced by user' });
-  }
-  
-  // Check if the particular slot of the service is booked by the current user
-  const result = service.slots.find(slot => slot._id.toString() === slotId);
-  if (!result || result.slot.bookedBy.toString() !== userId) {
-      return res.status(400).json({ message: 'Slot not booked by current user' });
-  }
-    // Check rent progress for order status
-     const serviceProgress = await ServiceProgress.findOne({ serviceID: serviceId, slotId, userId });
-     if (!serviceProgress || serviceProgress.orderinfo[0].status !== 'Intiated' || serviceProgress.slotId.toString() !== slotId) {
-         return res.status(400).json({ message: 'Cannot cancel the Service' });
-     }
-    // Update the slot status to available in the rent item
-    result.slot.status = 'available';
-    result.slot.bookedBy= null;
-
-    // Extract all slots that are unavailable and booked by the current user for the given service
-    const userSlots = await Slot.find({ "slot.bookedBy": userId, "slot.status": "booked", "service": serviceId });
-
-    // Remove the current user's given slotId from the obtained slots which were booked by the current user
-    const remainingSlots = userSlots.filter(slot => slot._id.toString() !== slotId);
-  
-    // If after removing the given slot, the length of the remaining slots is zero, remove the service from the user schema
-    if (remainingSlots.length === 0) {
-      user.services = user.services.filter(id => id.toString() !== serviceId);
-    }
-
-    // Concatenate the cancelled item with the order info
-    serviceProgress.orderinfo.push({
-        status: "Cancelled",
-        statusAt: Date.now(),
-    });
-
-    // Save the updated rent item, user, and rent progress
-    await result.save();
-    await user.save();
-    await serviceProgress.save();
-
-    return res.status(200).json({ message: 'Service cancelled successfully', service });
-  } catch (error) {
-    console.error("Error cancelling service:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
-
-//10 .get all booked service by the current user
-exports.getAllBookedServices = async (req, res) => {
-    const userId = req.user.id;
-
-    try {
-        // Find the user by ID and populate the services field
-        const user = await User.findById(userId).populate({
-            path: 'services',
-            select: 'serviceName serviceDescription serviceProvider slots',
-            populate: [
-                {
-                    path: 'serviceProvider',
-                    select: 'firstName lastName email contactNumber'
-                },
-                {
-                    path: 'slots',
-                    match: { 'slot.bookedBy': userId },
-                    populate: {
-                        path: 'slot.bookedBy',
-                        select: 'firstName lastName email contactNumber'
-                    }
-                }
-            ]
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Extract the service IDs from the user's services
-        const serviceIds = user.services.map(service => service._id);
-
-        // Find all service progress entries for the user's booked services
-        const serviceProgress = await ServiceProgress.find({ userId });
-
-        return res.status(200).json({ BookedServices: user.services, serviceProgress });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
-    }
-};
-
-
-
-// 11. get all users of the specific service
-exports.getAllUsersOfService = async (req, res) => {
-    const { serviceId } = req.params;
-
-    try {
-        // Find the service
-        const service = await Service.findById(serviceId);
-        if (!service) {
-            return res.status(404).json({ message: 'Service not found' });
-        }
-
-        // Populate users for each slot
-        await Service.populate(service, {
-            path: 'slots',
-            populate: {
-                path: 'slot.bookedBy',
-                model: 'user',
-                select: 'firstName lastName email contactNumber'
-            }
-        });
-
-        // Extract unique user information from each slot
-        const usersMap = new Map();
-        service.slots.forEach(slot => {
-                if (slot.slot.bookedBy) {
-                    usersMap.set(slot.slot.bookedBy._id.toString(), slot.slot.bookedBy);
-                }
-
-        });
-        const users = Array.from(usersMap.values());
-
-        return res.status(200).json({ users });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Internal Server Error' });
-    }
-};
-
-//get services created by an user
-
-  
+//////////////////////////////////////////////////////////////////////////////////////////////////

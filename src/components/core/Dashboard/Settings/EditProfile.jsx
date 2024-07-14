@@ -22,11 +22,12 @@ export default function EditProfile() {
   const submitProfileForm = async (data) => {
     // console.log("Form Data - ", data)
     try {
-      dispatch(updateProfile(token, data))
+      dispatch(updateProfile(token, {id: user._id, data}))
     } catch (error) {
       console.log("ERROR MESSAGE - ", error.message)
     }
   }
+
   return (
     <>
       <form onSubmit={handleSubmit(submitProfileForm)}>
@@ -63,7 +64,7 @@ export default function EditProfile() {
                 type="text"
                 name="lastName"
                 id="lastName"
-                placeholder="Enter first name"
+                placeholder="Enter last name"
                 className="form-style"
                 {...register("lastName", { required: true })}
                 defaultValue={user?.lastName}
@@ -126,7 +127,7 @@ export default function EditProfile() {
               </select>
               {errors.gender && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your Date of Birth.
+                  Please enter your gender.
                 </span>
               )}
             </div>
@@ -172,7 +173,38 @@ export default function EditProfile() {
               />
               {errors.about && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your About.
+                  Please enter your about.
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5 lg:flex-row">
+            <div className="flex flex-col gap-2 lg:w-[48%]">
+              <label htmlFor="contactNumber" className="lable-style">
+                Contact Number
+              </label>
+              <input
+                type="text"
+                name="contactNumber"
+                id="contactNumber"
+                placeholder="Enter your contact number"
+                className="form-style"
+                {...register("contactNumber", {
+                  required: {
+                    value: true,
+                    message: "Please enter your contact number.",
+                  },
+                  pattern: {
+                    value: /^[0-9\b]+$/,
+                    message: "Contact number must be digits only.",
+                  },
+                })}
+                defaultValue={user?.additionalDetails?.contactNumber}
+              />
+              {errors.contactNumber && (
+                <span className="-mt-1 text-[12px] text-yellow-100">
+                  {errors.contactNumber.message}
                 </span>
               )}
             </div>

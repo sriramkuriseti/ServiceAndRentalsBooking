@@ -4,7 +4,7 @@ const service = require("../models/Service")
 const serviceProgress = require("../models/ServiceProgress")
 const product  = require("../models/Product")
 const productProgress = require("../models/ProductProgress")
-const rent = require("../models/Service")
+const rent = require("../models/Rent")
 const rentProgress = require("../models/RentProgress")
 const rentSlots = require("../models/RentSlots")
 const serviceSlots = require("../models/ServiceSlots")
@@ -30,7 +30,7 @@ exports.updateProfile = async (req, res) => {
       address = "",
       contactNumber=" ",
     } = req.body;
-    const  id  = req.user.id;
+    const  {id}  = req.body;
 
     console.log(" user :",id);
     // Find the user by id
@@ -237,30 +237,79 @@ exports.updateDisplayPicture = async (req, res) => {
 }
 
 
-exports.instructorDashboard = async (req, res) => {
+exports.providerDashboardServiceData = async (req, res) => {
   try {
-    const Details = await Course.find({ instructor: req.user.id })
+    // Fetch all services provided by the logged-in user
+    const {userId } =req.body;
+    const services = await service.find({ provider: userId }).populate("slots");
 
-    const courseData = courseDetails.map((course) => {
-      const totalStudentsEnrolled = course.studentsEnroled.length
-      const totalAmountGenerated = totalStudentsEnrolled * course.price
+    const serviceData = services.map((service) => {
+      const totalSlots = service.slots.length;
+      const bookedSlots = service.slots.filter(slot => slot.slot.status === "booked").length;
+      const totalAmountGenerated = bookedSlots * service.price;
 
       // Create a new object with the additional fields
-      const courseDataWithStats = {
-        _id: course._id,
-        courseName: course.courseName,
-        courseDescription: course.courseDescription,
-        // Include other course properties as needed
-        totalStudentsEnrolled,
+      const serviceDataWithStats = {
+        _id: service._id,
+        name: service.name,
+        price :service.price,
+        description: service.description,
+        location: service.location,
+        totalSlots,
+        bookedSlots,
         totalAmountGenerated,
-      }
+        status: service.status,
+        thumbnail: service.thumbnail,
+        category: service.category,
+        Since: service.Since,
+        // Include other service properties as needed
+      };
 
-      return courseDataWithStats
-    })
+      return serviceDataWithStats;
+    });
 
-    res.status(200).json({ courses: courseData })
+    res.status(200).json({ services: serviceData });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Server Error" })
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
-}
+};
+
+
+exports.providerDashboardRentItemData = async (req, res) => {
+  try {
+    // Fetch all services provided by the logged-in user
+    const {userId } =req.body;
+    const rents = await rent.find({ provider: userId }).populate("slots");
+
+    const rentData = rents.map((rent) => {
+      const totalSlots = rent.slots.length;
+      const bookedSlots = rent.slots.filter(slot => slot.slot.status === "booked").length;
+      const totalAmountGenerated = bookedSlots * rent.price;
+
+      // Create a new object with the additional fields
+      const rentDataWithStats = {
+        _id: rent._id,
+        name: rent.name,
+        price :rent.price,
+        description: rent.description,
+        location: rent.location,
+        totalSlots,
+        bookedSlots,
+        totalAmountGenerated,
+        status: rent.status,
+        thumbnail: rent.thumbnail,
+        category: rent.category,
+        Since: rent.Since,
+        // Include other service properties as needed
+      };
+
+      return rentDataWithStats;
+    });
+
+    res.status(200).json({ rents: rentData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};

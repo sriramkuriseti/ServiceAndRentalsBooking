@@ -165,7 +165,7 @@ exports.updateProduct = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            product,
+            data: product,
             message: 'Product updated successfully',
         });
     } catch (error) {
@@ -308,6 +308,22 @@ exports.deleteProduct = async (req, res) => {
             success: false,
             message: 'Product deletion failed. Please try again.',
         });
+    }
+};
+
+exports.getAllProductsByProvider = async (req, res) => {
+    const providerId = req.user.id; 
+    try {
+        const products = await Product.find({ provider: providerId }).sort({ since: -1 });
+
+        res.status(200).json({ 
+            success:true,
+            data:products,
+            message:"All products fetched successfully ",
+        });
+    } catch (error) {
+        console.log(" Could not Fetch Products of the Provider ",error.message)
+        res.status(500).json({ message: "Internal server error" });
     }
 };
 

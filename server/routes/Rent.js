@@ -1,51 +1,72 @@
-const express = require("express");
-const router = express.Router();
-const { auth, isUser, isAdmin, isProvider } = require("../middleware/Auth");
+// Import the required modules
+const express = require("express")
+const router = express.Router()
 
 const {
-    createRentProduct,
-    updateRentProduct,
-    getAllRentItems,
-    getRentItemDetails,
-    deleteRentItem,
-    updateRentProgress,
-    bookRentItem,
-    cancelRentItem,
-    returnRentItem,
-    getRentItemProgress,
-    getBookedRentedItems,
-    getAllUsersOfRentItem
-} = require('../controllers/Rent');
+  createRentItem,
+  updateRentItem,
+  cancelRentItem,
+  getRentItemDetails,
+  deleteRentItem,
+  updateRentItemSlotProgress,
+  getProviderRentItems,
+  bookRentItem,
+  //checkServiceStatus,
+  //getAllServices,
+  //getAllUsersOfService
+} = require("../controllers/Rent")
 
 const {
-  createRentSlots,
-  updateRentSlots,
-  deleteRentSlots,
-  getSlotsOfRentItem
+  createRentItemSlots,
+  getSlotsOfRentItem,
+  getRentItemSlotDetails,
+  getRentItemsBookedByUser,
+  //updateServiceSlots,
+ // deleteServiceSlots,
 } = require("../controllers/RentSlots")
 
-/* ---------------- ROUTES for RENT ------------*/
 
-router.post("/createRentProduct", auth, isProvider, createRentProduct);
-router.put("/updateRentProduct/:id", auth, isProvider, updateRentProduct);
-router.get("/getAllRentItems", getAllRentItems);
-router.get("/getRentItemDetails/:id", getRentItemDetails);
-router.delete("/deleteRentItem/:id", auth, isProvider, deleteRentItem);
-router.put("/updateRentProgress/:id", auth, isProvider, updateRentProgress);
+// Importing Middlewares
+const { auth, isUser, isProvider } = require("../middleware/Auth")
+
+// ********************************************************************************************************
+//                                      provider routes 
+// ********************************************************************************************************
+
+router.post("/createRentItem", auth, isProvider, createRentItem)
+router.put("/updateRentItem", auth, isProvider, updateRentItem)
+router.post("/getProviderRentItems",auth,isProvider,getProviderRentItems);
+router.delete("/deleteRentItem", auth, isProvider, deleteRentItem)
+router.post("/updateRentItemSlotProgress", auth, isProvider, updateRentItemSlotProgress)
+
+//------------------------------unused------------------------------------------------------------
+//router.get("/getAllUsersOfService", auth,getAllUsersOfService)
 
 
-router.post("/createRentSlots", auth, isProvider, createRentSlots)
-router.put("/updateRentSlots/:slotId", auth, isProvider, updateRentSlots)
-router.delete("/deleteRentSlots/:slotId", auth, isProvider, deleteRentSlots)
-router.get("/getSlotsOfRentItem/:rentId", getSlotsOfRentItem)
+// ********************************************************************************************************
+//                                      customer routes 
+// ********************************************************************************************************
+router.put("/bookRentItem",auth,isUser, bookRentItem)
+router.post("/cancelRentItem", auth,isUser, cancelRentItem)
+router.post("/getRentItemsBookedByUser", auth, isUser, getRentItemsBookedByUser)
+router.post("/getRentItemDetails", getRentItemDetails)
 
-/* ---------------- CUSTOMER SIDE --------------- */
 
-router.post("/bookRentItem", auth, isUser, bookRentItem);
-router.put("/cancelRentItem", auth, isUser, cancelRentItem);
-router.put("/returnRentItem", auth, isUser, returnRentItem);
-router.get("/getRentItemProgress", auth, isUser, getRentItemProgress);
-router.get("/getBookedRentedItems", auth, isUser, getBookedRentedItems);
-router.get("/getAllUsersOfRentItem/:rentId", auth, getAllUsersOfRentItem);
+//------------------------------unused------------------------------------------------------------
+//router.get("/checkServiceStatus", auth,isUser, checkServiceStatus)
+//router.get("/getAllServices", getAllServices)
 
-module.exports = router;
+
+// ********************************************************************************************************
+//                                      slots routes 
+// ********************************************************************************************************
+router.post("/createRentItemSlots", auth, isProvider, createRentItemSlots)
+router.post("/getSlotsOfRentItem", getSlotsOfRentItem)
+router.post("/getRentItemSlotDetails", auth, isProvider,getRentItemSlotDetails)
+
+
+//------------------------------unused------------------------------------------------------------
+//router.put("/updateServiceSlots", auth, isProvider, updateRentItemSlots)
+//router.delete("/deleteServiceSlots", auth, isProvider, deleteRentItemSlots)
+
+module.exports = router
