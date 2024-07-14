@@ -57,7 +57,7 @@ import ManageServiceOffering from "./components/core/Dashboard/ProviderDashboard
 import ManageRentOffering from "./components/core/Dashboard/ProviderDashboard/View/ManageRentOffering"
 
 import Edit from "./components/core/Dashboard/ProviderDashboard/Edit/Edit"
-import EditProduct from "./components/core/Dashboard/ProviderDashboard/Edit/indexProduct"
+
 
 import Add from "./components/core/Dashboard/ProviderDashboard/Add"
 import AddService from "./components/core/Dashboard/ProviderDashboard/Add/AddService/index"
