@@ -1,1 +1,1 @@
-# StudyNotion Edtech Project
+# ServiceAndRentalsBooking Project
